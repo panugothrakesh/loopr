@@ -8,18 +8,34 @@ import Sidebar from "../components/Sidebar";
 import { useAuthStore } from "../store/useAuthStore";
 import { useContractStore } from "../store/useContractStore";
 import apiService from "../services/api";
+import { encodeFunctionData, createPublicClient, http } from "viem";
+import {  sepolia } from "viem/chains";
+import { CONTRACT_ABI } from "../constants/NewContractABI";
 import { usePrivyWallet } from "../hooks/usePrivyWallet";
 
 function NewContractPage() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
   const { createContract, error } = useContractStore();
-  const { isConnected, walletAddress } = usePrivyWallet();
+  const {
+    isConnected,
+    walletAddress,
+    walletClient,
+    sendTransaction,
+    connectedWallet,
+    switchToChainSepolia,
+  } = usePrivyWallet();
 
   // Contract configuration
   const CONTRACT_ADDRESS =
     "0x058ccfC56771574915DB375929c8650c01d48211" as const;
   const BASE_SEPOLIA_CHAIN_ID = 11155111; // Base Sepolia chain ID
+
+  // Create public client for reading transaction receipts
+  const publicClient = createPublicClient({
+    chain: sepolia,
+    transport: http(),
+  });
 
   const [formData, setFormData] = useState({
     title: "",
@@ -71,6 +87,41 @@ function NewContractPage() {
           >
             Go to Dashboard
           </button>
+        </div>
+      </div>
+    );
+  }
+  if (
+    connectedWallet.chainId !== BASE_SEPOLIA_CHAIN_ID.toString() &&
+    connectedWallet.chainId !== `eip155:${BASE_SEPOLIA_CHAIN_ID}`
+  ) {
+    return (
+      <div className="min-h-screen bg-[#f9fafb] flex items-center justify-center">
+        <div className="bg-white rounded-2xl border border-[#e5e7eb] p-8 max-w-md w-full mx-4 text-center">
+          <h3 className="text-lg font-semibold text-[#141e41] mb-2">
+            Wrong Network
+          </h3>
+          <p className="text-sm text-[#6b7280] mb-4">
+            Please switch to Base Sepolia network to create a contract.
+          </p>
+          <p className="text-xs text-[#9695a7] mb-4">
+            Current Chain ID: {connectedWallet.chainId} | Required:{" "}
+            {BASE_SEPOLIA_CHAIN_ID.toString()}
+          </p>
+          <div className="w-full flex items-center gap-1">
+            <button
+              onClick={switchToChainSepolia}
+              className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-700"
+            >
+              Switch to Sepolia
+            </button>
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="px-6 py-3 rounded-xl ml-1 bg-indigo-600 text-white font-medium hover:bg-indigo-700"
+            >
+              Go to Dashboard
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -166,15 +217,85 @@ function NewContractPage() {
       clearInterval(progressInterval);
       setUploadProgress(100);
 
+      // Use IPFS CID as on-chain document reference
+      const documentContentHash = response.cid.cid;
+
+      console.log("=== CONTRACT DEPLOYMENT DATA ===");
+      console.log("Contract Address:", CONTRACT_ADDRESS);
+      console.log("File Name:", file.name);
+      console.log("Document Title:", formData.title);
+      console.log("Document Description:", formData.description);
+      console.log("Intended Signer:", formData.recipientAddress);
+      console.log("Document Content Hash:", documentContentHash);
+      console.log("IPFS Gateway URL:", response.gatewayUrl);
+      console.log("================================");
+
+      // Call the smart contract deployNftSign function using viem
+      if (!walletClient) {
+        throw new Error("Wallet client not available");
+      }
+
+      const deployNftSignData = encodeFunctionData({
+        abi: CONTRACT_ABI,
+        functionName: "deployNftSign",
+        args: [
+          file.name, // _fileName
+          formData.title, // _documentTitle
+          formData.description, // _documentDescription
+          formData.recipientAddress as `0x${string}`, // _intendedSigner
+          documentContentHash, // _documentContentHash
+        ],
+      });
+
+      console.log("=== VIEM TRANSACTION DATA ===");
+      console.log("Encoded Function Data:", deployNftSignData);
+      console.log("==============================");
+
+      // Send transaction
+      const hash = await sendTransaction({
+        to: CONTRACT_ADDRESS,
+        data: deployNftSignData,
+        value: 0n, // No ETH value needed
+      });
+
+      console.log("=== TRANSACTION RESULT ===");
+      console.log("Transaction Hash:", hash);
+      console.log("==========================");
+
+      // Wait for transaction receipt
+      const receipt = await publicClient.waitForTransactionReceipt(hash);
+
+      console.log("=== TRANSACTION RECEIPT ===");
+      console.log("Receipt:", receipt);
+      console.log("============================");
+
+      // Extract the deployed contract address from the event
+      let deployedContractAddress = "";
+      if (receipt.logs && receipt.logs.length > 2) {
+        const log = receipt.logs[2];
+        if (log.topics && log.topics.length > 2) {
+          const topicValue = log.topics[2];
+          if (typeof topicValue === "string" && topicValue.length >= 40) {
+            deployedContractAddress = "0x" + topicValue.slice(-40);
+            console.log(
+              "Extracted deployed contract address:",
+              deployedContractAddress
+            );
+          }
+        }
+      }
+
       // Generate fingerprint for the creator (user's fingerprint)
-      const creatorFingerprint = response.cid.cid;
+      const creatorFingerprint = `creator_${user.uid}_${Date.now()}`;
 
       // Generate fingerprint for recipient (will be updated when they sign)
       const recipientFingerprint = `recipient_${formData.recipientAddress}_${Date.now()}`;
 
       // Create contract data
       const contractData = {
-        contract_address: CONTRACT_ADDRESS,
+        contract_address:
+          deployedContractAddress ||
+          `0x${Math.random().toString(16).substr(2, 40)}`,
         title: formData.title,
         fingerprint: creatorFingerprint,
         recipients: [
