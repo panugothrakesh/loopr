@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { User } from '../models/User';
 import { CreateContractRequest, CreateContractResponse, UpdateContractRequest, AuthenticatedRequest } from '../types';
 // Create new contract
-export const createContract = async (req: any, res: Response): Promise<void> => {   
+export const createContract = async (req: any, res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
@@ -75,22 +75,26 @@ export const createContract = async (req: any, res: Response): Promise<void> => 
       message: 'Contract created successfully',
       contract: createdContract
     };
-    
-    for (const recipient of recipients) {
-      try {
-        await fetch('https://email-client.abdulsahil.me/notify-customer', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            link: `http://localhost:5173/contract-detail/${contract_address}`,
-            email: recipient.mail
-          })
-        });
-      } catch (err) {
-        console.error(`Failed to notify recipient ${recipient.mail}:`, err);
-        // Optionally, you could continue or handle errors differently
+
+    const emailServiceUrl = process.env.EMAIL_SERVICE_URL;
+
+    if (emailServiceUrl) {
+      for (const recipient of recipients) {
+        try {
+          await fetch(emailServiceUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              link: `${process.env.CLIENT_URL || 'http://localhost:5173'}/contract-detail/${contract_address}`,
+              email: recipient.mail
+            })
+          });
+        } catch (err) {
+          console.error(`Failed to notify recipient ${recipient.mail}:`, err);
+          // Optionally, you could continue or handle errors differently
+        }
       }
     }
 
@@ -116,7 +120,7 @@ export const getMyAllContracts = async (req: AuthenticatedRequest, res: Response
     }
 
     const user = await User.findOne({ uid: req.user.uid }).select('contracts -_id');
-    
+
     if (!user) {
       res.status(404).json({
         success: false,
@@ -201,7 +205,7 @@ export const updateContract = async (req: any, res: Response): Promise<void> => 
     if (title) updateData['contracts.$.title'] = title;
     if (status) updateData['contracts.$.status'] = status;
     if (recipients) updateData['contracts.$.recipients'] = recipients;
-    
+
     // Always update the updated_at timestamp
     updateData['contracts.$.updated_at'] = new Date();
 
@@ -214,7 +218,7 @@ export const updateContract = async (req: any, res: Response): Promise<void> => 
     }
 
     const updatedUser = await User.findOneAndUpdate(
-      { 
+      {
         uid: req.user.uid,
         'contracts.contract_address': contractAddress
       },
@@ -344,12 +348,12 @@ export const updateRecipientStatus = async (req: any, res: Response): Promise<vo
     }
 
     const updatedUser = await User.findOneAndUpdate(
-      { 
+      {
         uid: req.user.uid,
         'contracts.contract_address': contractAddress
       },
       { $set: updateFields },
-      { 
+      {
         new: true,
         arrayFilters: [
           { 'contract.contract_address': contractAddress },

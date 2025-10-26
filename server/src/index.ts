@@ -41,12 +41,7 @@ app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/health`);
-  console.log(`📁 Upload endpoint: http://localhost:${PORT}/upload`);
-  console.log(`👤 User endpoints: http://localhost:${PORT}/api/users`);
-  console.log(`📋 Contract endpoints: http://localhost:${PORT}/api/contracts`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Server running on port ${PORT}`);
 });
 
 export default app;
