@@ -60,6 +60,7 @@
     "vite-plugin-node-polyfills": "^0.24.0",
     "wagmi": "^2.16.9",
     "zustand": "^5.0.8"
+
   },
   "devDependencies": {
     "@commitlint/cli": "19.5.0",
