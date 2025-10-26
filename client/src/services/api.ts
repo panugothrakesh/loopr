@@ -17,7 +17,7 @@ import {
   ApiError,
 } from '../types';
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 class ApiService {
   private getAuthToken(): string | null {
@@ -29,7 +29,7 @@ class ApiService {
     options: RequestInit = {}
   ): Promise<T> {
     const token = this.getAuthToken();
-    
+
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ class ApiService {
 
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-      
+
       if (!response.ok) {
         const errorData: ApiError = await response.json().catch(() => ({
           success: false,
@@ -132,7 +132,7 @@ class ApiService {
     formData.append('file', file);
 
     const token = this.getAuthToken();
-    
+
     const response = await fetch(`${API_BASE_URL}/upload`, {
       method: 'POST',
       headers: {

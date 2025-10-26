@@ -94,20 +94,19 @@ function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-green-50">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b border-gray-200">
+      <nav className="sticky top-0 z-50 backdrop-blur-md bg-[#f6f6f4] border-b border-gray-200 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3">
-              <div
-                className="h-10 w-10 rounded-xl flex items-center justify-center shadow-lg"
-                style={{ background: 'linear-gradient(135deg, #0047ff 0%, #00d4ff 100%)' }}
-              >
-                <span className="text-white font-bold text-lg">L</span>
-              </div>
-              <span className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                Loopr
-              </span>
-            </div>
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-3"
+            >
+              <img
+                src="/loopr.png"
+                alt="Loopr Logo"
+                className="h-12 w-auto"
+              />
+            </button>
             <button
               onClick={() => navigate('/onboarding')}
               className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-white font-medium shadow-lg transition-all hover:scale-105 hover:shadow-xl"
@@ -130,7 +129,7 @@ function LandingPage() {
                 Blockchain-Powered Digital Signatures
               </span>
             </div>
-            
+
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-dark-500 mb-6 leading-tight">
               Sign Agreements
               <br />
@@ -138,7 +137,7 @@ function LandingPage() {
                 On the Blockchain
               </span>
             </h1>
-            
+
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed">
               Create tamper-proof, legally binding agreements with cryptographic security.
               Send, sign, and verify contracts onchain with complete transparency and privacy.
@@ -297,7 +296,7 @@ function LandingPage() {
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
-        
+
         {/* Decorative Elements */}
         <div className="absolute top-0 left-0 w-full h-full opacity-20">
           <div className="absolute top-20 left-20 w-64 h-64 bg-primary-500 rounded-full blur-3xl" />
@@ -306,17 +305,15 @@ function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 py-12 px-4 sm:px-6 lg:px-8">
+      <footer className="bg-[#f6f6f4] border-t border-gray-200 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3">
-              <div
-                className="h-10 w-10 rounded-xl flex items-center justify-center shadow-lg"
-                style={{ background: 'linear-gradient(135deg, #0047ff 0%, #00d4ff 100%)' }}
-              >
-                <span className="text-white font-bold text-lg">L</span>
-              </div>
-              <span className="text-xl font-bold text-dark-500">Loopr</span>
+              <img
+                src="/loopr.png"
+                alt="Loopr Logo"
+                className="h-10 w-auto"
+              />
             </div>
             <p className="text-gray-600 text-center">
               © 2025 Loopr. All rights reserved. Blockchain-powered digital signatures.

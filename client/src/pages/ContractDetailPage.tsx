@@ -25,7 +25,7 @@ interface BlockchainContractData {
 }
 
 const getBaseScanLink = (address: string) =>
-  `https://sepolia.etherscan.org/address/${address}`;
+  `https://sepolia.etherscan.io/address/${address}`;
 
 function ContractDetailPage() {
   const { contractAddress } = useParams<{ contractAddress: string }>();
