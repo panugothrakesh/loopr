@@ -1,39 +1,39 @@
 {
-  "name": "encryption-server",
-  "version": "1.0.0",
-  "description": "Encryption server with Lit Protocol and Irys integration",
-  "main": "dist/server.js",
-  "type": "module",
-  "scripts": {
-    "build": "tsc -p ./tsconfig.json",
-    "dev": "tsc -p ./tsconfig.json && node dist/server.js",
-    "serve": "node dist/server.js",
-    "upload:file": "node dist/scripts/upload-with-metadata.js",
-    "download:file": "node dist/scripts/download-and-write.js",
-    "test:flow": "node dist/scripts/run-readme-flow.js"
-  },
-  "keywords": [
-    "encryption",
-    "lit-protocol",
-    "irys",
-    "blockchain",
-    "decentralized"
-  ],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@irys/upload": "^0.0.15",
-    "@irys/upload-ethereum": "^0.0.16",
-    "@lit-protocol/auth-helpers": "^7.3.0",
-    "@lit-protocol/encryption": "^7.3.0",
-    "@lit-protocol/lit-node-client": "^7.3.0",
-    "@lit-protocol/types": "^7.3.0",
-    "ethers": "^5.8.0",
-    "h3": "^1.15.4",
-    "dotenv": "^17.2.2"
-  },
-  "devDependencies": {
-    "@types/node": "^24.3.1",
-    "typescript": "^5.9.2"
-  }
+    "name": "encryption-server",
+    "version": "1.0.0",
+    "description": "Encryption server with Lit Protocol and Irys integration",
+    "main": "dist/server.js",
+    "type": "module",
+    "scripts": {
+        "build": "tsc -p ./tsconfig.json",
+        "dev": "tsc -p ./tsconfig.json && node dist/server.js",
+        "serve": "node dist/server.js",
+        "upload:file": "node dist/scripts/upload-with-metadata.js",
+        "download:file": "node dist/scripts/download-and-write.js",
+        "test:flow": "node dist/scripts/run-readme-flow.js"
+    },
+    "keywords": [
+        "encryption",
+        "lit-protocol",
+        "irys",
+        "blockchain",
+        "decentralized"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@irys/upload": "^0.0.15",
+        "@irys/upload-ethereum": "^0.0.16",
+        "@lit-protocol/auth-helpers": "^7.3.0",
+        "@lit-protocol/encryption": "^7.3.0",
+        "@lit-protocol/lit-node-client": "^7.3.0",
+        "@lit-protocol/types": "^7.3.0",
+        "ethers": "^5.8.0",
+        "h3": "^1.15.4",
+        "dotenv": "^17.2.2"
+    },
+    "devDependencies": {
+        "@types/node": "^24.3.1",
+        "typescript": "^5.9.2"
+    }
 }
