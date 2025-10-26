@@ -1,7 +1,8 @@
 import { Uploader } from "@irys/upload";
 import { Ethereum } from "@irys/upload-ethereum";
 import { requirePrivateKey } from "./lit-client.js";
-import { EncryptedPayload, AccessControlCondition, EncryptionOptions, IRYS_GATEWAY } from "./types.js";
+import type { EncryptedPayload, AccessControlCondition, EncryptionOptions } from "./types.js";
+import { IRYS_GATEWAY } from "./types.js";
 
 // ---------- Irys helpers ----------
 async function getIrysUploader(walletPrivateKey?: string) {
