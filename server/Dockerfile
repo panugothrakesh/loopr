@@ -19,8 +19,8 @@ COPY package.json yarn.lock .yarnrc.yml ./
 
 # Install ALL dependencies (including dev dependencies for build) with cache mount
 RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
-    yarn config set cacheFolder /usr/local/share/.cache/yarn && \
-    yarn install --frozen-lockfile
+    yarn config set globalFolder /usr/local/share/.cache/yarn && \
+    yarn install --immutable
 
 # Copy source code
 COPY . .
@@ -46,8 +46,8 @@ COPY package.json yarn.lock .yarnrc.yml ./
 
 # Install only production dependencies
 RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
-    yarn config set cacheFolder /usr/local/share/.cache/yarn && \
-    yarn install --frozen-lockfile --production
+    yarn config set globalFolder /usr/local/share/.cache/yarn && \
+    yarn install --immutable --mode=production
 
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
