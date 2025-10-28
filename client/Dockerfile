@@ -16,12 +16,12 @@ RUN apt-get update && apt-get install -y \
 RUN corepack enable && corepack prepare yarn@1.22.22 --activate
 
 # Copy package files for dependency layer caching
-COPY package.json yarn.lock .yarnrc.yml ./
+COPY package.json yarn.lock ./
 
 # Configure yarn and install dependencies with cache mount
 RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
-    yarn config set globalFolder /usr/local/share/.cache/yarn && \
-    yarn install --immutable
+    yarn config set cacheFolder /usr/local/share/.cache/yarn && \
+    yarn install --frozen-lockfile
 
 # Set build environment
 ENV NODE_ENV=production

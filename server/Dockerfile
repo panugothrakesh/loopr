@@ -44,10 +44,12 @@ RUN corepack enable && corepack prepare yarn@4.5.1 --activate
 # Copy package files
 COPY package.json yarn.lock .yarnrc.yml ./
 
-# Install only production dependencies
+# Install dependencies (including dev), then prune to production only
 RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
     yarn config set globalFolder /usr/local/share/.cache/yarn && \
-    yarn install --immutable --mode=production
+    yarn install --immutable && \
+    yarn workspaces focus --production && \
+    yarn cache clean
 
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
