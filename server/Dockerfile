@@ -15,12 +15,9 @@ RUN apt-get update && apt-get install -y \
 RUN corepack enable && corepack prepare yarn@4.5.1 --activate
 
 # Copy package files for dependency layer caching
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock .yarnrc.yml ./
 
-# Configure yarn
-RUN yarn config set enableGlobalCache false
-
-# Install ALL dependencies (including dev dependencies for build)
+# Install ALL dependencies (including dev dependencies for build) with cache mount
 RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
     yarn config set cacheFolder /usr/local/share/.cache/yarn && \
     yarn install --frozen-lockfile
@@ -41,11 +38,11 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Enable corepack
-RUN corepack enable
+# Enable corepack and set up yarn
+RUN corepack enable && corepack prepare yarn@4.5.1 --activate
 
 # Copy package files
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock .yarnrc.yml ./
 
 # Install only production dependencies
 RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \

@@ -18,10 +18,7 @@ RUN corepack enable && corepack prepare yarn@1.22.22 --activate
 # Copy package files for dependency layer caching
 COPY package.json yarn.lock ./
 
-# Configure yarn
-RUN yarn config set enableGlobalCache false
-
-# Install dependencies with cache mount
+# Configure yarn and install dependencies with cache mount
 RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
     yarn config set cacheFolder /usr/local/share/.cache/yarn && \
     yarn install --frozen-lockfile
