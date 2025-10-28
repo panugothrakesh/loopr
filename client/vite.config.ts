@@ -20,7 +20,8 @@ export default defineConfig({
       protocolImports: true,
     }),
   ],
-  base: process.env.NODE_ENV === 'production' ? '/todo-app/' : '/',
+  // Ensure assets are served from root in all environments
+  base: '/',
 
   build: {
     outDir: 'dist',
